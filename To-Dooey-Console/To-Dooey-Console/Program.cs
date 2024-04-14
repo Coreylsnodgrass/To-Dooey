@@ -16,13 +16,14 @@ public class Program
 
         while (true)
         {
-            Console.WriteLine("Choose an option:");
+            Console.WriteLine("\nChoose an option:");
             Console.WriteLine("1: Create a new list");
             Console.WriteLine("2: Add a task to a list");
             Console.WriteLine("3: Display lists");
             Console.WriteLine("4: Exit");
 
-            switch (Console.ReadLine())
+            string option = Console.ReadLine();
+            switch (option)
             {
                 case "1":
                     await CreateList();
@@ -46,7 +47,6 @@ public class Program
     {
         Console.WriteLine("Enter the name of the new list:");
         string listName = Console.ReadLine();
-        // Make sure the JSON keys match what the API expects
         var data = new { listName = listName };
         var content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
         var response = await client.PostAsync("Lists", content);
@@ -56,29 +56,32 @@ public class Program
         }
         else
         {
-            Console.WriteLine("Failed to create the list. Status Code: " + response.StatusCode);
-            // Read and display the response body to help diagnose the issue:
-            var responseContent = await response.Content.ReadAsStringAsync();
-            Console.WriteLine(responseContent);
+            Console.WriteLine($"Failed to create the list. Status Code: {response.StatusCode}");
+            Console.WriteLine(await response.Content.ReadAsStringAsync());
         }
     }
-
-
 
     private static async Task AddTaskToList()
     {
         Console.WriteLine("Enter the ID of the list to add a task:");
-        int listId = int.Parse(Console.ReadLine());
+        if (!int.TryParse(Console.ReadLine(), out int listId))
+        {
+            Console.WriteLine("Invalid input for list ID.");
+            return;
+        }
         Console.WriteLine("Enter the task description:");
         string taskDescription = Console.ReadLine();
-        var response = await client.PostAsync($"Lists/{listId}/tasks", new StringContent(JsonSerializer.Serialize(new { description = taskDescription }), Encoding.UTF8, "application/json"));
+        var data = new { description = taskDescription };
+        var content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
+        var response = await client.PostAsync($"Lists/{listId}/tasks", content);
         if (response.IsSuccessStatusCode)
         {
             Console.WriteLine("Task added successfully.");
         }
         else
         {
-            Console.WriteLine("Failed to add task to the list.");
+            Console.WriteLine($"Failed to add task to the list. Status Code: {response.StatusCode}");
+            Console.WriteLine(await response.Content.ReadAsStringAsync());
         }
     }
 
@@ -88,16 +91,47 @@ public class Program
         if (response.IsSuccessStatusCode)
         {
             var content = await response.Content.ReadAsStringAsync();
-            var lists = JsonSerializer.Deserialize<List<string>>(content);
-            Console.WriteLine("Lists:");
-            foreach (var list in lists)
+            try
             {
-                Console.WriteLine(list);
+                var lists = JsonSerializer.Deserialize<List<ToDoList>>(content);
+                Console.WriteLine("Lists and their tasks:");
+                foreach (var list in lists)
+                {
+                    Console.WriteLine($"List ID: {list.Id}, Name: {list.Name}");
+                    foreach (var task in list.Tasks)
+                    {
+                        Console.WriteLine($"\tTask ID: {task.Id}, Description: {task.Description}, Completed: {task.IsCompleted}");
+                    }
+                }
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"JSON parsing error: {ex.Message}");
             }
         }
         else
         {
             Console.WriteLine("Failed to retrieve lists.");
+            Console.WriteLine(await response.Content.ReadAsStringAsync());
         }
     }
+    public class ToDoList
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public List<TaskItem> Tasks { get; set; }
+
+        public ToDoList()
+        {
+            Tasks = new List<TaskItem>(); // Ensures Tasks is never null
+        }
+    }
+
+    public class TaskItem
+    {
+        public int Id { get; set; }
+        public string Description { get; set; }
+        public bool IsCompleted { get; set; }
+    }
+
 }
