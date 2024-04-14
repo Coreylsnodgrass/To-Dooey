@@ -93,14 +93,26 @@ public class Program
             var content = await response.Content.ReadAsStringAsync();
             try
             {
-                var lists = JsonSerializer.Deserialize<List<ToDoList>>(content);
+                // Deserialize the response into a list of ToDoList objects
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var lists = JsonSerializer.Deserialize<List<ToDoList>>(content, options);
                 Console.WriteLine("Lists and their tasks:");
+
                 foreach (var list in lists)
                 {
                     Console.WriteLine($"List ID: {list.Id}, Name: {list.Name}");
-                    foreach (var task in list.Tasks)
+
+                    // Safeguard against null values for Tasks
+                    if (list.Tasks != null && list.Tasks.Count > 0)
                     {
-                        Console.WriteLine($"\tTask ID: {task.Id}, Description: {task.Description}, Completed: {task.IsCompleted}");
+                        foreach (var task in list.Tasks)
+                        {
+                            Console.WriteLine($"\tTask ID: {task.Id}, Description: {task.Description}, Completed: {task.IsCompleted}");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("\tNo tasks in this list.");
                     }
                 }
             }
@@ -115,6 +127,7 @@ public class Program
             Console.WriteLine(await response.Content.ReadAsStringAsync());
         }
     }
+
     public class ToDoList
     {
         public int Id { get; set; }
