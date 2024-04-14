@@ -19,10 +19,20 @@ namespace TodoApi.Controllers
 
         // POST: api/Lists
         [HttpPost]
-        public IActionResult PostTodoList(string listName)
+        public IActionResult PostTodoList([FromBody] CreateListModel model)
         {
-            todoLists.Add(listName);
-            return CreatedAtAction(nameof(PostTodoList), new { listName = listName });
+            if (model == null || string.IsNullOrWhiteSpace(model.listName))
+            {
+                // Return a bad request if the model is null or the list name is empty
+                return BadRequest("The list name is required.");
+            }
+
+            todoLists.Add(model.listName); // Add the list name to your list collection
+            return CreatedAtAction(nameof(GetTodoLists), new { listName = model.listName }, model);
+        }
+        public class CreateListModel
+        {
+            public string listName { get; set; }
         }
 
         // PUT: api/Lists/5
