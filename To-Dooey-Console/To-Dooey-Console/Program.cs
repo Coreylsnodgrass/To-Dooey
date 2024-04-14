@@ -32,7 +32,9 @@ public class Program
             Console.WriteLine("2: Add a task to a list");
             Console.WriteLine("3: Display lists");
             Console.WriteLine("4: Update task details");
-            Console.WriteLine("5: Exit");
+            Console.WriteLine("5: Delete a list");
+            Console.WriteLine("6: Delete a task from a list");
+            Console.WriteLine("7: Exit");
 
             string option = Console.ReadLine();
             switch (option)
@@ -50,6 +52,12 @@ public class Program
                     await UpdateTask();
                     break;
                 case "5":
+                    await DeleteList();
+                    break;
+                case "6":
+                    await DeleteTask();
+                    break;
+                case "7":
                     return;
                 default:
                     Console.WriteLine("Invalid option, try again.");
@@ -154,6 +162,55 @@ public class Program
             Console.WriteLine(await response.Content.ReadAsStringAsync());
         }
     }
+    private static async Task DeleteList()
+    {
+        Console.WriteLine("Enter the ID of the list to delete:");
+        if (!int.TryParse(Console.ReadLine(), out int listId))
+        {
+            Console.WriteLine("Invalid input for list ID.");
+            return;
+        }
+
+        var response = await client.DeleteAsync($"Lists/{listId}");
+        if (response.IsSuccessStatusCode)
+        {
+            Console.WriteLine("List deleted successfully.");
+        }
+        else
+        {
+            Console.WriteLine($"Failed to delete the list. Status Code: {response.StatusCode}");
+            Console.WriteLine(await response.Content.ReadAsStringAsync());
+        }
+    }
+    private static async Task DeleteTask()
+    {
+        Console.WriteLine("Enter the ID of the list:");
+        if (!int.TryParse(Console.ReadLine(), out int listId))
+        {
+            Console.WriteLine("Invalid input for list ID.");
+            return;
+        }
+
+        Console.WriteLine("Enter the ID of the task to delete:");
+        if (!int.TryParse(Console.ReadLine(), out int taskId))
+        {
+            Console.WriteLine("Invalid input for task ID.");
+            return;
+        }
+
+        var response = await client.DeleteAsync($"Lists/{listId}/tasks/{taskId}");
+        if (response.IsSuccessStatusCode)
+        {
+            Console.WriteLine("Task deleted successfully.");
+        }
+        else
+        {
+            Console.WriteLine($"Failed to delete the task. Status Code: {response.StatusCode}");
+            Console.WriteLine(await response.Content.ReadAsStringAsync());
+        }
+    }
+
+
 
     public class ToDoList
     {

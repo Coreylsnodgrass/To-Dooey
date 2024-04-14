@@ -123,6 +123,26 @@ namespace TodoApi.Controllers
             task.Responsibility = model.Responsibility;
             return NoContent();
         }
+        // DELETE: api/Lists/{listId}/tasks/{taskId}
+        [HttpDelete("{listId}/tasks/{taskId}")]
+        public IActionResult DeleteTask(int listId, int taskId)
+        {
+            var list = todoLists.FirstOrDefault(l => l.Id == listId);
+            if (list == null)
+            {
+                return NotFound("List not found.");
+            }
+
+            var task = list.Tasks.FirstOrDefault(t => t.Id == taskId);
+            if (task == null)
+            {
+                return NotFound("Task not found.");
+            }
+
+            list.Tasks.Remove(task);
+            return NoContent();
+        }
+
     }
 
     public class UpdateTaskModel
