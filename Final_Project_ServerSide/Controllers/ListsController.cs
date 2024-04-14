@@ -70,6 +70,8 @@ namespace TodoApi.Controllers
             todoLists.Remove(list);
             return NoContent();
         }
+        //-====================================================== Task Stuff=======================================
+
 
         // POST: api/Lists/{listId}/tasks
         [HttpPost("{listId}/tasks")]
@@ -101,8 +103,34 @@ namespace TodoApi.Controllers
             }
             return Ok(task);
         }
+
+        [HttpPut("{listId}/tasks/{taskId}")]
+        public IActionResult UpdateTask(int listId, int taskId, [FromBody] UpdateTaskModel model)
+        {
+            var list = todoLists.FirstOrDefault(l => l.Id == listId);
+            if (list == null)
+            {
+                return NotFound("List not found.");
+            }
+            var task = list.Tasks.FirstOrDefault(t => t.Id == taskId);
+            if (task == null)
+            {
+                return NotFound("Task not found.");
+            }
+
+            task.Description = model.Description;
+            task.Status = model.Status;
+            task.Responsibility = model.Responsibility;
+            return NoContent();
+        }
     }
 
+    public class UpdateTaskModel
+    {
+        public string Description { get; set; }
+        public CompletionStatus Status { get; set; }
+        public string Responsibility { get; set; }
+    }
     public class CreateListModel
     {
         public string listName { get; set; }
