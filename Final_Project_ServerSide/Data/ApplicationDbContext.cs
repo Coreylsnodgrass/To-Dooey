@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TodoApi.Models;
 
+
 public class ApplicationDbContext : DbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
