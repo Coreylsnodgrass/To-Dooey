@@ -12,5 +12,5 @@ Features:
   Ability to look at any list at any given time.
 
 Extensions
-  Avalonia
+  Avalonia - Community toolkit (not reactive ui)
   
