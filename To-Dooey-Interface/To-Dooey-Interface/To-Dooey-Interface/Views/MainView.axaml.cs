@@ -1,9 +1,18 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Markup.Xaml;
 
-public partial class MainView : UserControl
+namespace To_Dooey_Interface.Views
 {
-    public MainView()
+    public partial class MainView : UserControl
     {
-        InitializeComponent();
+        public MainView()
+        {
+            InitializeComponent();
+        }
+
+        private void InitializeComponent()
+        {
+            AvaloniaXamlLoader.Load(this);
+        }
     }
 }

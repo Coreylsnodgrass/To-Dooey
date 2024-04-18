@@ -1,16 +1,27 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl x:Class="To_Dooey_Interface.Views.MainView"
+             xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:To_Dooey_Interface.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="To_Dooey_Interface.Views.MainView"
-             x:DataType="vm:MainViewModel">
-  <Design.DataContext>
-    <!-- This only sets the DataContext for the previewer in an IDE,
-         to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-    <vm:MainViewModel />
-  </Design.DataContext>
+             mc:Ignorable="d"
+             d:DesignWidth="800" d:DesignHeight="450">
 
-  <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+	<!-- DataContext for design time data, this can be omitted if not using design time data -->
+	<d:Design.DataContext>
+		<vm:MainViewModel/>
+	</d:Design.DataContext>
+
+	<!-- Main layout container, e.g., a StackPanel, Grid, etc. -->
+	<Grid>
+		<!-- Define your UI elements here, for example, a button and a list -->
+		<Button Content="Add Task" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="40"/>
+		<ListBox Items="{Binding ToDoLists}" HorizontalAlignment="Right" Width="200" Height="400">
+			<!-- Define item template for the list box -->
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Name}"/>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+	</Grid>
 </UserControl>
