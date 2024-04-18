@@ -14,9 +14,12 @@ namespace To_Dooey_Interface
 
         public override void OnFrameworkInitializationCompleted()
         {
-            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktopLifetime.MainWindow = new MainWindow();
+                desktop.MainWindow = new MainWindow
+                {
+                    DataContext = new MainWindowViewModel() // Assuming you have a ViewModel for your MainWindow
+                };
             }
 
             base.OnFrameworkInitializationCompleted();

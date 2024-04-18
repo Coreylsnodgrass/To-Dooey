@@ -1,22 +1,22 @@
 <UserControl x:Class="To_Dooey_Interface.Views.MainView"
              xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d"
-             d:DesignWidth="800" d:DesignHeight="450">
-
-	<!-- DataContext for design time data, this can be omitted if not using design time data -->
-	<d:Design.DataContext>
-		<vm:MainViewModel/>
-	</d:Design.DataContext>
-
-	<!-- Main layout container, e.g., a StackPanel, Grid, etc. -->
+             xmlns:vm="clr-namespace:To_Dooey_Interface.ViewModels"
+             x:DataType="vm:MainViewModel">
 	<Grid>
-		<!-- Define your UI elements here, for example, a button and a list -->
-		<Button Content="Add Task" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="40"/>
-		<ListBox Items="{Binding ToDoLists}" HorizontalAlignment="Right" Width="200" Height="400">
-			<!-- Define item template for the list box -->
+		<!-- Row definitions for layout control -->
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<!-- Row for the button -->
+			<RowDefinition Height="*"/>
+			<!-- Row for the ListBox, taking up the rest of the space -->
+		</Grid.RowDefinitions>
+
+		<!-- Button for adding a new list -->
+		<Button Content="Add List" Command="{Binding AddListCommand}" Grid.Row="0" Margin="10"/>
+
+		<!-- ListBox to display the lists -->
+		<ListBox Items="{Binding Lists}" Grid.Row="1" Margin="10">
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<TextBlock Text="{Binding Name}"/>
