@@ -1,7 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using To;
+using To_Dooey_Interface.ViewModels;
+
 
 public class MainViewModel : INotifyPropertyChanged
 {
