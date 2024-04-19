@@ -1,57 +1,67 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:To_Dooey_Interface.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:To_Dooey_Interface.ViewModels"
         xmlns:views="clr-namespace:To_Dooey_Interface.Views"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d"
+        d:DesignWidth="800"
+        d:DesignHeight="450"
         x:Class="To_Dooey_Interface.Views.MainWindow"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="To Do">
-	<Window.Styles>
-		<Style Selector="Button">
-			<Setter Property="Background" Value="#0078D7"/>
-			<Setter Property="Foreground" Value="White"/>
-			<Setter Property="BorderThickness" Value="0"/>
-			<Setter Property="Padding" Value="10,5"/>
-		</Style>
-		<Style Selector="TextBlock">
-			<Setter Property="FontSize" Value="14"/>
-			<Setter Property="FontFamily" Value="Segoe UI"/>
-		</Style>
-	</Window.Styles>
+        Title="To Do"
+        Icon="/Assets/avalonia-logo.ico">
+
 	<Grid>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="3*" />
-			<ColumnDefinition Width="2*" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
 
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 
-		<!-- Header with Title and Add Button -->
-		<StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" VerticalAlignment="Top" Margin="12">
-			<TextBlock Text="To Do" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" />
-			<Button Content="Add" Margin="12,0,0,0" VerticalAlignment="Center" />
+		<!-- Side Panel -->
+		<Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Background="#F0F0F0" Margin="12">
+			<StackPanel Orientation="Vertical">
+				<!-- Side Panel Title -->
+				<TextBlock Text="Lists" FontSize="24" FontWeight="Bold" Margin="12,12,12,0" />
+
+				<!-- List of Lists -->
+				<ListBox ItemsSource="{Binding Lists}" SelectedItem="{Binding SelectedList}" BorderThickness="0">
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding Name}" FontSize="18" FontWeight="Bold" Margin="12,0,12,0" />
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+
+				<!-- New List Button -->
+				<Button Content="New List" Command="{Binding AddListCommand}" Margin="12,12,12,0" HorizontalAlignment="Stretch" />
+			</StackPanel>
+		</Border>
+
+		<!-- Header with Title and Add Task Button -->
+		<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Vertical" VerticalAlignment="Top" Margin="12">
+			<TextBlock Text="To Dooey" FontSize="28" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" />
+			<!-- Add Task Button -->
+			<Button Content="Add Task" Command="{Binding AddTaskCommand}" Margin="0,0,12,0" HorizontalAlignment="Left" />
 		</StackPanel>
 
-		<!-- Main Task List -->
-		<ListBox Grid.Row="1" Grid.Column="0" Margin="12">
-			<!-- Define your ItemTemplate here if necessary -->
-		</ListBox>
-		<Button Grid.Column="1" Grid.Row="1" Content="Add a task" Command="{Binding AddTaskCommand}" />
-
-		<Button Grid.Column="0" Grid.Row="1" Content="New List" Command="{Binding AddListCommand}" />
-
-		<!-- Sidebar for Additional Lists -->
-		<StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical" Margin="12">
-			<TextBlock Text="Today" FontSize="18" FontWeight="Bold" />
-			<ListBox Margin="12" />
-			<TextBlock Text="This Week" FontSize="18" FontWeight="Bold" Margin="12,12,0,0" />
-			<ListBox Margin="12" />
-		</StackPanel>
+		<!-- List of Tasks for Selected List -->
+		<ScrollViewer Grid.Column="1" Grid.Row="1" Margin="12">
+			<ListBox ItemsSource="{Binding SelectedList.Tasks}" SelectedItem="{Binding SelectedTask}" BorderThickness="0">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<StackPanel Orientation="Horizontal">
+							<CheckBox IsChecked="{Binding IsCompleted}" Margin="12,0,0,0" />
+							<TextBlock Text="{Binding Description}" FontSize="16" />
+						</StackPanel>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</ScrollViewer>
 	</Grid>
-
 </Window>
