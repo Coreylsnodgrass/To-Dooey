@@ -1,37 +1,60 @@
-﻿using Avalonia.Controls;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+﻿using System.Collections.ObjectModel;
+using System.Linq;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
-namespace To_Dooey_Interface.ViewModels;
-
-// Ensure MyItemType is defined somewhere in your project
-public class MyItemType
+namespace To_Dooey_Interface.ViewModels
 {
-    // Replace these properties with the actual ones you need
-    public string Title { get; set; }
-    public bool IsCompleted { get; set; }
-}
-
-public partial class MainViewModel : ViewModelBase
-{
-    public string Greeting => "Welcome to Avalonia!";
-
-    public ObservableCollection<MyItemType> MyItems { get; }
-
-    public MainViewModel()
+    public partial class MainViewModel : ObservableObject
     {
-        MyItems = new ObservableCollection<MyItemType>();
-        // Populate your collection with some sample data
-        MyItems.Add(new MyItemType { Title = "Sample Task", IsCompleted = false });
-        if (Design.IsDesignMode)
+        [ObservableProperty]
+        private ObservableCollection<TaskListViewModel> lists = new();
+
+
+        [ObservableProperty]
+        private TaskListViewModel selectedList;
+
+        public ObservableCollection<TaskItemViewModel> SelectedListTasks => SelectedList?.Tasks;
+
+        public MainViewModel()
         {
-            LoadDesignTimeData();
+            // Assuming you have default lists to load, do so here
+            Lists.Add(new TaskListViewModel { Name = "My Day" });
+            // ... Add other lists
+            SelectedList = Lists.FirstOrDefault();
+        }
+
+        [RelayCommand]
+        private void AddList()
+        {
+            // Implementation for adding a new list
+            var newList = new TaskListViewModel { Name = "New List" };
+            Lists.Add(newList);
+            SelectedList = newList;
+        }
+
+        [RelayCommand]
+        private void AddTask()
+        {
+            // Implementation for adding a new task
+            if (SelectedList != null)
+            {
+                var newTask = new TaskItemViewModel { Description = "New Task", IsCompleted = false };
+                SelectedList.Tasks.Add(newTask);
+            }
         }
     }
-    private void LoadDesignTimeData()
+
+    public partial class TaskListViewModel : ObservableObject
     {
-        // Load design time data into MyItems
-        MyItems.Add(new MyItemType { /* properties */ });
+        [ObservableProperty]
+
+        private string name;
+
+
+
+        public ObservableCollection<TaskItemViewModel> Tasks { get; } = new();
     }
+
+   
 }

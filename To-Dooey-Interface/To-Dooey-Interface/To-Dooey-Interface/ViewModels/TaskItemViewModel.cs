@@ -6,11 +6,12 @@ using To_Dooey_Interface.Models;
 
 namespace To_Dooey_Interface.ViewModels
 {
-    public class TaskItemViewModel : INotifyPropertyChanged
+    public partial class TaskItemViewModel : INotifyPropertyChanged
     {
         private string _description;
         private CompletionStatus _status;
         private string _responsibility;
+        private bool _iscompleted;
 
         public int Id { get; set; }
 
@@ -25,6 +26,12 @@ namespace To_Dooey_Interface.ViewModels
             get => _status;
             set => SetProperty(ref _status, value);
         }
+        public bool IsCompleted
+        {
+            get => _iscompleted;
+            set => SetProperty(ref _iscompleted, value);
+        }
+
 
         public string Responsibility
         {

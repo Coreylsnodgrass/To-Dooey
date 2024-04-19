@@ -8,30 +8,50 @@
         x:Class="To_Dooey_Interface.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="To Do">
-
+	<Window.Styles>
+		<Style Selector="Button">
+			<Setter Property="Background" Value="#0078D7"/>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Padding" Value="10,5"/>
+		</Style>
+		<Style Selector="TextBlock">
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="FontFamily" Value="Segoe UI"/>
+		</Style>
+	</Window.Styles>
 	<Grid>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*" />
-			<ColumnDefinition Width="auto" />
+			<ColumnDefinition Width="3*" />
+			<ColumnDefinition Width="2*" />
 		</Grid.ColumnDefinitions>
 
 		<Grid.RowDefinitions>
-			<RowDefinition Height="auto" />
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 
-		<StackPanel Orientation="Horizontal" Margin="12">
+		<!-- Header with Title and Add Button -->
+		<StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" VerticalAlignment="Top" Margin="12">
 			<TextBlock Text="To Do" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" />
-			<Button Margin="12,0,0,0" Content="Add" />
+			<Button Content="Add" Margin="12,0,0,0" VerticalAlignment="Center" />
 		</StackPanel>
 
-		<ListBox Grid.Row="1" Grid.Column="0" Margin="12" />
+		<!-- Main Task List -->
+		<ListBox Grid.Row="1" Grid.Column="0" Margin="12">
+			<!-- Define your ItemTemplate here if necessary -->
+		</ListBox>
+		<Button Grid.Column="1" Grid.Row="1" Content="Add a task" Command="{Binding AddTaskCommand}" />
 
-		<StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical">
-			<TextBlock Text="Today" FontSize="18" FontWeight="Bold" Margin="12,0,0,12" />
+		<Button Grid.Column="0" Grid.Row="1" Content="New List" Command="{Binding AddListCommand}" />
+
+		<!-- Sidebar for Additional Lists -->
+		<StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical" Margin="12">
+			<TextBlock Text="Today" FontSize="18" FontWeight="Bold" />
 			<ListBox Margin="12" />
 			<TextBlock Text="This Week" FontSize="18" FontWeight="Bold" Margin="12,12,0,0" />
 			<ListBox Margin="12" />
 		</StackPanel>
 	</Grid>
+
 </Window>
