@@ -7,6 +7,31 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="To_Dooey_Interface.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
-        Title="To_Dooey_Interface">
-        <views:MainView />
+        Title="To Do">
+
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="auto" />
+		</Grid.ColumnDefinitions>
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+
+		<StackPanel Orientation="Horizontal" Margin="12">
+			<TextBlock Text="To Do" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" />
+			<Button Margin="12,0,0,0" Content="Add" />
+		</StackPanel>
+
+		<ListBox Grid.Row="1" Grid.Column="0" Margin="12" />
+
+		<StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical">
+			<TextBlock Text="Today" FontSize="18" FontWeight="Bold" Margin="12,0,0,12" />
+			<ListBox Margin="12" />
+			<TextBlock Text="This Week" FontSize="18" FontWeight="Bold" Margin="12,12,0,0" />
+			<ListBox Margin="12" />
+		</StackPanel>
+	</Grid>
 </Window>
