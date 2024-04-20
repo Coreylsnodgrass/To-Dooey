@@ -2,7 +2,7 @@
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
-
+using To_Dooey_Interface.Services;
 using To_Dooey_Interface.ViewModels;
 using To_Dooey_Interface.Views;
 
@@ -10,6 +10,7 @@ namespace To_Dooey_Interface;
 
 public partial class App : Application
 {
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -17,25 +18,18 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        // Line below is needed to remove Avalonia data validation.
-        // Without this line you will get duplicate validations from both Avalonia and CT
-        BindingPlugins.DataValidators.RemoveAt(0);
-
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
+            var apiService = new ApiService(); // Ensure ApiService is correctly implemented and accessible
+            var dialogService = new DialogService(); // Ensure DialogService is correctly implemented and accessible
+
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainViewModel()
-            };
-        }
-        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
-        {
-            singleViewPlatform.MainView = new MainView
-            {
-                DataContext = new MainViewModel()
+                DataContext = new MainViewModel(apiService, dialogService)
             };
         }
 
         base.OnFrameworkInitializationCompleted();
     }
+
 }

@@ -1,4 +1,4 @@
-﻿namespace To_Dooey_Interface.Models
+﻿namespace To_Dooey_Interface.ViewModels
 {
     public enum CompletionStatus
     {

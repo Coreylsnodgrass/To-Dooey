@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using To_Dooey_Interface.Models;
+using To_Dooey_Interface.ViewModels;
 
 namespace To_Dooey_Interface.ViewModels
 {
