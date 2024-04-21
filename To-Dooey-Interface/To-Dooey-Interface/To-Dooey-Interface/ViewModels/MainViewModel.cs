@@ -10,33 +10,24 @@ namespace To_Dooey_Interface.ViewModels
 {
     public partial class MainViewModel : ObservableObject
     {
-
+        // Commands
+        public ICommand AddListCommand { get; }
+        public ICommand AddTaskCommand { get; }
 
         private readonly ApiService _apiService;
         private readonly IDialogService _dialogService;
 
 
-        public MainViewModel()
-        {
-            // Initialize with default or null services, not recommended.
-        }
-
-
-        // Backing field for SelectedList
         [ObservableProperty]
-        private ToDoListViewModel _selectedList;
+        private ToDoListViewModel selectedList;
 
-        private ObservableCollection<ToDoListViewModel> _lists = new ObservableCollection<ToDoListViewModel>();
-
-        // Commands
-        public ICommand AddListCommand { get; }
-        public ICommand AddTaskCommand { get; }
+        private ObservableCollection<ToDoListViewModel> lists = new ObservableCollection<ToDoListViewModel>();
 
         // Lists property
         public ObservableCollection<ToDoListViewModel> Lists
         {
-            get => _lists;
-            set => SetProperty(ref _lists, value);
+            get => lists;
+            set => SetProperty(ref lists, value);
         }
 
         public MainViewModel(ApiService apiService, IDialogService dialogService)
@@ -89,15 +80,27 @@ namespace To_Dooey_Interface.ViewModels
             if (taskDetails.Description != null)
             {
                 await _apiService.AddTaskToList(SelectedList.Id, taskDetails.Description, taskDetails.Status, taskDetails.Responsibility);
-                await LoadTasksForSelectedList();
+                await LoadTasksForSelectedListAsync();
             }
         }
 
-        private async Task LoadTasksForSelectedList()
+        //public ToDoListViewModel _SelectedList
+        //{
+        //    get => _selectedList;
+        //    set
+        //    {
+        //        if (SetProperty(ref _selectedList, value))
+        //        {
+        //            // This will automatically call LoadTasksForSelectedListAsync whenever the selected list changes.
+        //            LoadTasksForSelectedListAsync();
+        //        }
+        //    }
+        //}
+        public async Task LoadTasksForSelectedListAsync()
         {
             if (SelectedList != null)
             {
-                var tasks = await _apiService.GetTasksForList(SelectedList.Id);
+                var tasks = await _apiService.GetTasksForListAsync(SelectedList.Id);
                 SelectedList.Tasks.Clear();
                 foreach (var task in tasks)
                 {
@@ -112,6 +115,14 @@ namespace To_Dooey_Interface.ViewModels
                 }
             }
         }
+
+        // This method is automatically called after SelectedList is changed.
+        partial void OnSelectedListChanged(ToDoListViewModel value)
+        {
+            // Custom logic after the selected list changes, like loading tasks.
+            LoadTasksForSelectedListAsync();
+        }
+
 
         private bool ConvertStatusToIsCompleted(CompletionStatus status)
         {

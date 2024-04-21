@@ -10,9 +10,7 @@
         x:Class="To_Dooey_Interface.Views.MainWindow"
         Title="To Do"
         Icon="/Assets/avalonia-logo.ico">
-	<Window.DataContext>
-		<vm:MainViewModel/>
-	</Window.DataContext>
+	
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" />

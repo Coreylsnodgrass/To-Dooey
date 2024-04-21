@@ -107,7 +107,7 @@ namespace To_Dooey_Interface.Services
                 throw new Exception($"Failed to update the task. Status Code: {response.StatusCode}");
             }
         }
-        public async Task<List<TaskItemViewModel>> GetTasksForList(int listId)
+        public async Task<List<TaskItemViewModel>> GetTasksForListAsync(int listId)
         {
             var response = await client.GetAsync($"Tasks/ByList/{listId}");
             if (response.IsSuccessStatusCode)
@@ -123,6 +123,7 @@ namespace To_Dooey_Interface.Services
                 throw new Exception($"Failed to fetch tasks for list {listId}. Status code: {response.StatusCode}");
             }
         }
+
 
 
 
