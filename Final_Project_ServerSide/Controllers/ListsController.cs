@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TodoApi.Models;
+using Microsoft.EntityFrameworkCore;  // Add this to use EF Core functionalities
 
 namespace TodoApi.Controllers
 {
@@ -9,19 +10,26 @@ namespace TodoApi.Controllers
     [ApiController]
     public class ListsController : ControllerBase
     {
-        // Mock database
-        private static List<ToDoList> todoLists = new List<ToDoList>();
+        private readonly ApplicationDbContext _context;
+
+        public ListsController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
 
         // GET: api/Lists
         [HttpGet]
-        public IActionResult GetTodoLists()
+        public async Task<IActionResult> GetTodoLists()
         {
-            return Ok(todoLists);
+            var lists = await _context.ToDoLists
+                                      .Include(l => l.Tasks)  // Ensure to load tasks with lists
+                                      .ToListAsync();
+            return Ok(lists);
         }
 
         // POST: api/Lists
         [HttpPost]
-        public IActionResult PostTodoList([FromBody] CreateListModel model)
+        public async Task<IActionResult> PostTodoList([FromBody] CreateListModel model)
         {
             if (model == null || string.IsNullOrWhiteSpace(model.listName))
             {
@@ -30,19 +38,19 @@ namespace TodoApi.Controllers
 
             var newList = new ToDoList
             {
-                Id = todoLists.Any() ? todoLists.Max(l => l.Id) + 1 : 1,
                 Name = model.listName,
                 Tasks = new List<TaskItem>()
             };
-            todoLists.Add(newList);
+            _context.ToDoLists.Add(newList);
+            await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetTodoLists), new { id = newList.Id }, newList);
         }
 
         // PUT: api/Lists/{id}
         [HttpPut("{id}")]
-        public IActionResult PutTodoList(int id, [FromBody] UpdateListModel model)
+        public async Task<IActionResult> PutTodoList(int id, [FromBody] UpdateListModel model)
         {
-            var list = todoLists.FirstOrDefault(l => l.Id == id);
+            var list = await _context.ToDoLists.FindAsync(id);
             if (list == null)
             {
                 return NotFound();
@@ -54,109 +62,34 @@ namespace TodoApi.Controllers
             }
 
             list.Name = model.listName;
+            await _context.SaveChangesAsync();
             return NoContent();
         }
 
         // DELETE: api/Lists/{id}
         [HttpDelete("{id}")]
-        public IActionResult DeleteTodoList(int id)
+        public async Task<IActionResult> DeleteTodoList(int id)
         {
-            var list = todoLists.FirstOrDefault(l => l.Id == id);
+            var list = await _context.ToDoLists.FindAsync(id);
             if (list == null)
             {
                 return NotFound();
             }
 
-            todoLists.Remove(list);
-            return NoContent();
-        }
-        //-====================================================== Task Stuff=======================================
-
-
-        // POST: api/Lists/{listId}/tasks
-        [HttpPost("{listId}/tasks")]
-        public IActionResult AddTask(int listId, [FromBody] TaskItem task)
-        {
-            var list = todoLists.FirstOrDefault(l => l.Id == listId);
-            if (list == null)
-            {
-                return NotFound("List not found.");
-            }
-            task.Id = list.Tasks.Any() ? list.Tasks.Max(t => t.Id) + 1 : 1;
-            list.Tasks.Add(task);
-            return CreatedAtAction("GetTask", new { listId = list.Id, taskId = task.Id }, task);
-        }
-
-        // GET: api/Lists/{listId}/tasks/{taskId}
-        [HttpGet("{listId}/tasks/{taskId}")]
-        public IActionResult GetTask(int listId, int taskId)
-        {
-            var list = todoLists.FirstOrDefault(l => l.Id == listId);
-            if (list == null)
-            {
-                return NotFound("List not found.");
-            }
-            var task = list.Tasks.FirstOrDefault(t => t.Id == taskId);
-            if (task == null)
-            {
-                return NotFound("Task not found.");
-            }
-            return Ok(task);
-        }
-
-        [HttpPut("{listId}/tasks/{taskId}")]
-        public IActionResult UpdateTask(int listId, int taskId, [FromBody] UpdateTaskModel model)
-        {
-            var list = todoLists.FirstOrDefault(l => l.Id == listId);
-            if (list == null)
-            {
-                return NotFound("List not found.");
-            }
-            var task = list.Tasks.FirstOrDefault(t => t.Id == taskId);
-            if (task == null)
-            {
-                return NotFound("Task not found.");
-            }
-
-            task.Description = model.Description;
-            task.Status = model.Status;
-            task.Responsibility = model.Responsibility;
-            return NoContent();
-        }
-        // DELETE: api/Lists/{listId}/tasks/{taskId}
-        [HttpDelete("{listId}/tasks/{taskId}")]
-        public IActionResult DeleteTask(int listId, int taskId)
-        {
-            var list = todoLists.FirstOrDefault(l => l.Id == listId);
-            if (list == null)
-            {
-                return NotFound("List not found.");
-            }
-
-            var task = list.Tasks.FirstOrDefault(t => t.Id == taskId);
-            if (task == null)
-            {
-                return NotFound("Task not found.");
-            }
-
-            list.Tasks.Remove(task);
+            _context.ToDoLists.Remove(list);
+            await _context.SaveChangesAsync();
             return NoContent();
         }
 
+        // Additional methods for tasks would also be updated to use _context
     }
 
-    public class UpdateTaskModel
-    {
-        public string Description { get; set; }
-        public CompletionStatus Status { get; set; }
-        public string Responsibility { get; set; }
-    }
-    public class CreateListModel
+    public class UpdateListModel
     {
         public string listName { get; set; }
     }
 
-    public class UpdateListModel
+    public class CreateListModel
     {
         public string listName { get; set; }
     }

@@ -7,11 +7,8 @@ using System.Threading.Tasks;
 
 public class Program
 {
-
-
-    private static HttpClient client = new HttpClient();
-    private static string baseUrl = "http://localhost:5138/api/";
-
+    private static readonly HttpClient client = new HttpClient();
+    private static readonly string baseUrl = "http://localhost:5138/api/";
 
     public enum CompletionStatus
     {
@@ -33,7 +30,7 @@ public class Program
             Console.WriteLine("3: Display lists");
             Console.WriteLine("4: Update task details");
             Console.WriteLine("5: Delete a list");
-            Console.WriteLine("6: Delete a task from a list");
+            Console.WriteLine("6: Delete a task");
             Console.WriteLine("7: Exit");
 
             string option = Console.ReadLine();
@@ -58,6 +55,7 @@ public class Program
                     await DeleteTask();
                     break;
                 case "7":
+                    Console.WriteLine("Exiting...");
                     return;
                 default:
                     Console.WriteLine("Invalid option, try again.");
@@ -67,11 +65,14 @@ public class Program
     }
 
     private static async Task CreateList()
+{
+    Console.WriteLine("Enter the name of the new list:");
+    string listName = Console.ReadLine();
+    var data = new { listName = listName };
+    var content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
+
+    try
     {
-        Console.WriteLine("Enter the name of the new list:");
-        string listName = Console.ReadLine();
-        var data = new { listName = listName };
-        var content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
         var response = await client.PostAsync("Lists", content);
         if (response.IsSuccessStatusCode)
         {
@@ -80,9 +81,15 @@ public class Program
         else
         {
             Console.WriteLine($"Failed to create the list. Status Code: {response.StatusCode}");
-            Console.WriteLine(await response.Content.ReadAsStringAsync());
+            var responseContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Response from server: {responseContent}");
         }
     }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Exception occurred: {ex.Message}");
+    }
+}
 
     private static async Task AddTaskToList()
     {
@@ -103,10 +110,11 @@ public class Program
         {
             description = taskDescription,
             status = Enum.Parse<CompletionStatus>(taskStatus, true), // Assuming the API is expecting an enum value
-            responsibility = taskResponsibility
+            responsibility = taskResponsibility,
+            toDoListId = listId  // Make sure to use the proper case as defined in the API
         };
         var content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
-        var response = await client.PostAsync($"Lists/{listId}/tasks", content);
+        var response = await client.PostAsync($"Tasks/{listId}", content);
         if (response.IsSuccessStatusCode)
         {
             Console.WriteLine("Task added successfully.");
@@ -117,6 +125,7 @@ public class Program
             Console.WriteLine(await response.Content.ReadAsStringAsync());
         }
     }
+
 
 
     private static async Task DisplayLists()
@@ -171,7 +180,8 @@ public class Program
             return;
         }
 
-        var response = await client.DeleteAsync($"Lists/{listId}");
+        var response = await SafeHttpClientAction(() => client.DeleteAsync($"Lists/{listId}"));
+
         if (response.IsSuccessStatusCode)
         {
             Console.WriteLine("List deleted successfully.");
@@ -184,13 +194,6 @@ public class Program
     }
     private static async Task DeleteTask()
     {
-        Console.WriteLine("Enter the ID of the list:");
-        if (!int.TryParse(Console.ReadLine(), out int listId))
-        {
-            Console.WriteLine("Invalid input for list ID.");
-            return;
-        }
-
         Console.WriteLine("Enter the ID of the task to delete:");
         if (!int.TryParse(Console.ReadLine(), out int taskId))
         {
@@ -198,7 +201,8 @@ public class Program
             return;
         }
 
-        var response = await client.DeleteAsync($"Lists/{listId}/tasks/{taskId}");
+        var response = await SafeHttpClientAction(() => client.DeleteAsync($"Tasks/{taskId}"));
+
         if (response.IsSuccessStatusCode)
         {
             Console.WriteLine("Task deleted successfully.");
@@ -249,6 +253,23 @@ public class Program
         {
             Console.WriteLine($"Failed to update the task. Status Code: {response.StatusCode}");
             Console.WriteLine(await response.Content.ReadAsStringAsync());
+        }
+    }
+    private static async Task<HttpResponseMessage> SafeHttpClientAction(Func<Task<HttpResponseMessage>> httpClientAction)
+    {
+        try
+        {
+            return await httpClientAction();
+        }
+        catch (HttpRequestException httpEx)
+        {
+            Console.WriteLine($"HTTP Request error: {httpEx.Message}");
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+            throw;
         }
     }
 
