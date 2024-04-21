@@ -36,22 +36,31 @@ namespace To_Dooey_Interface.Services
             }
         }
 
-        public async Task AddTaskToList(int listId, string taskDescription, CompletionStatus taskStatus, string taskResponsibility)
+        public async Task<TaskItemViewModel> AddTaskToList(int listId, string taskDescription, CompletionStatus taskStatus, string taskResponsibility)
         {
             var data = new
             {
                 description = taskDescription,
                 status = taskStatus,
-                responsibility = taskResponsibility
+                responsibility = taskResponsibility,
+                toDoListId = listId
             };
             var content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
-            var response = await client.PostAsync($"Lists/{listId}/tasks", content);
+            var response = await client.PostAsync($"Tasks/{listId}", content);
 
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var task = JsonSerializer.Deserialize<TaskItemViewModel>(responseContent);
+                return task;
+            }
+            else
             {
                 throw new Exception($"Failed to add task to the list. Status Code: {response.StatusCode}");
             }
         }
+
+
 
 
         public async Task DeleteList(int listId)
@@ -98,6 +107,25 @@ namespace To_Dooey_Interface.Services
                 throw new Exception($"Failed to update the task. Status Code: {response.StatusCode}");
             }
         }
+        public async Task<List<TaskItemViewModel>> GetTasksForList(int listId)
+        {
+            var response = await client.GetAsync($"Tasks/ByList/{listId}");
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var tasks = JsonSerializer.Deserialize<List<TaskItemViewModel>>(content, options);
+                return tasks;
+            }
+            else
+            {
+                // Handle the error or throw an exception
+                throw new Exception($"Failed to fetch tasks for list {listId}. Status code: {response.StatusCode}");
+            }
+        }
+
+
+
 
 
     }

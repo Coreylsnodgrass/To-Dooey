@@ -1,12 +1,11 @@
-﻿// TaskItemViewModel.cs
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using To_Dooey_Interface.ViewModels;
+using System.Text.Json.Serialization;
 
 namespace To_Dooey_Interface.ViewModels
 {
-    public partial class TaskItemViewModel : INotifyPropertyChanged
+    public class TaskItemViewModel : INotifyPropertyChanged
     {
         private string _description;
         private CompletionStatus _status;
@@ -15,28 +14,32 @@ namespace To_Dooey_Interface.ViewModels
 
         public int Id { get; set; }
 
+        [JsonPropertyName("description")]
         public string Description
         {
             get => _description;
             set => SetProperty(ref _description, value);
         }
 
+        [JsonPropertyName("status")]
         public CompletionStatus Status
         {
             get => _status;
             set => SetProperty(ref _status, value);
         }
-        public bool IsCompleted
-        {
-            get => _iscompleted;
-            set => SetProperty(ref _iscompleted, value);
-        }
 
-
+        [JsonPropertyName("responsibility")]
         public string Responsibility
         {
             get => _responsibility;
             set => SetProperty(ref _responsibility, value);
+        }
+
+        [JsonPropertyName("iscompleted")]
+        public bool IsCompleted
+        {
+            get => _iscompleted;
+            set => SetProperty(ref _iscompleted, value);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

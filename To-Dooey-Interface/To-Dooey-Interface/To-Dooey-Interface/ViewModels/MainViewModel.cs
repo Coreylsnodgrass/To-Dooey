@@ -10,31 +10,35 @@ namespace To_Dooey_Interface.ViewModels
 {
     public partial class MainViewModel : ObservableObject
     {
-        
+
 
         private readonly ApiService _apiService;
         private readonly IDialogService _dialogService;
 
-        //[ObservableProperty]
-        //rivate ObservableCollection<ToDoListViewModel> lists;
-
-        [ObservableProperty]
-        private ToDoListViewModel selectedList;
-        private ObservableCollection<ToDoListViewModel> lists = new ObservableCollection<ToDoListViewModel>();
-
-
-        public ICommand AddListCommand { get; }
-        public ICommand AddTaskCommand { get; }
 
         public MainViewModel()
         {
-           
+            // Initialize with default or null services, not recommended.
         }
+
+
+        // Backing field for SelectedList
+        [ObservableProperty]
+        private ToDoListViewModel _selectedList;
+
+        private ObservableCollection<ToDoListViewModel> _lists = new ObservableCollection<ToDoListViewModel>();
+
+        // Commands
+        public ICommand AddListCommand { get; }
+        public ICommand AddTaskCommand { get; }
+
+        // Lists property
         public ObservableCollection<ToDoListViewModel> Lists
         {
-            get { return lists; }
-            set { SetProperty(ref lists, value); }
+            get => _lists;
+            set => SetProperty(ref _lists, value);
         }
+
         public MainViewModel(ApiService apiService, IDialogService dialogService)
         {
             _apiService = apiService ?? throw new ArgumentNullException(nameof(apiService));
@@ -51,7 +55,7 @@ namespace To_Dooey_Interface.ViewModels
             try
             {
                 var apiLists = await _apiService.GetListsAsync();
-                Lists.Clear(); // Clear existing lists if refreshing all data
+                Lists.Clear();
                 foreach (var apiList in apiLists)
                 {
                     Lists.Add(new ToDoListViewModel(apiList.Id, apiList.Name));
@@ -62,7 +66,6 @@ namespace To_Dooey_Interface.ViewModels
                 Console.Error.WriteLine($"Error loading data: {ex.Message}");
             }
         }
-
 
         private async Task AddListAsync()
         {
@@ -76,29 +79,43 @@ namespace To_Dooey_Interface.ViewModels
 
         private async Task AddTaskAsync()
         {
+            if (SelectedList == null)
+            {
+                // Optionally handle displaying a message to the user
+                return;
+            }
+
+            var taskDetails = await _dialogService.ShowAddTaskDialogAsync();
+            if (taskDetails.Description != null)
+            {
+                await _apiService.AddTaskToList(SelectedList.Id, taskDetails.Description, taskDetails.Status, taskDetails.Responsibility);
+                await LoadTasksForSelectedList();
+            }
+        }
+
+        private async Task LoadTasksForSelectedList()
+        {
             if (SelectedList != null)
             {
-                var taskDescription = await _dialogService.GetTaskDescriptionAsync();
-                var taskStatus = await _dialogService.GetTaskStatusAsync();
-                var taskResponsibility = await _dialogService.GetTaskResponsibilityAsync();
-
-                try
+                var tasks = await _apiService.GetTasksForList(SelectedList.Id);
+                SelectedList.Tasks.Clear();
+                foreach (var task in tasks)
                 {
-                    await _apiService.AddTaskToList(SelectedList.Id, taskDescription, taskStatus, taskResponsibility);
-                    await LoadData(); // Refresh the data after adding the task
-                }
-                catch (Exception ex)
-                {
-                    Console.Error.WriteLine($"Error adding task: {ex.Message}");
-                    // Handle the exception as needed
+                    SelectedList.Tasks.Add(new TaskItemViewModel
+                    {
+                        Id = task.Id,
+                        Description = task.Description,
+                        Status = task.Status,
+                        Responsibility = task.Responsibility,
+                        IsCompleted = ConvertStatusToIsCompleted(task.Status)
+                    });
                 }
             }
         }
 
+        private bool ConvertStatusToIsCompleted(CompletionStatus status)
+        {
+            return status == CompletionStatus.Completed;
+        }
     }
-
-
 }
-
-
-

@@ -30,6 +30,13 @@ namespace Final_Project_ServerSide.Controllers
             var tasks = await _context.TaskItems.ToListAsync();
             return Ok(tasks);
         }
+        // GET: api/Tasks/ByList/{listId}
+        [HttpGet("ByList/{listId}")]
+        public async Task<IActionResult> GetTasksByList(int listId)
+        {
+            var tasks = await _context.TaskItems.Where(task => task.ToDoListId == listId).ToListAsync();
+            return Ok(tasks);
+        }
 
         // POST: api/Tasks/{listId} - Create a task within a specific list
         [HttpPost("{listId}")]
