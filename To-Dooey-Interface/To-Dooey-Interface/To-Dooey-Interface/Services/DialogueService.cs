@@ -134,7 +134,7 @@ namespace To_Dooey_Interface.Services
 
             cancelButton.Click += (_, _) =>
             {
-                completionSource.SetResult(null);
+                completionSource.SetResult((null));
                 dialog.Close();
             };
 
@@ -242,9 +242,9 @@ namespace To_Dooey_Interface.Services
             var statusComboBox = new ComboBox
             {
                 Margin = new Thickness(10),
-                ItemsSource = Enum.GetValues(typeof(CompletionStatus)).Cast<CompletionStatus>().ToList()
+                ItemsSource = Enum.GetValues(typeof(CompletionStatus)).Cast<CompletionStatus>().ToList(),
+                SelectedIndex = 0  // Default selection
             };
-
             var responsibilityTextBox = new TextBox { Watermark = "Enter responsibility name...", Margin = new Thickness(10) };
 
             // Create Buttons for OK and Cancel
@@ -262,7 +262,7 @@ namespace To_Dooey_Interface.Services
             // Setup the Cancel button click event
             cancelButton.Click += (_, _) =>
             {
-                completionSource.SetResult((null, default, null));
+                completionSource.SetResult((null, default(CompletionStatus), null)); // Signal cancellation
                 dialog.Close();
             };
 
@@ -285,8 +285,10 @@ namespace To_Dooey_Interface.Services
                 await dialog.ShowDialog(desktop.MainWindow);
             }
 
+            // Await the task completion source which gets signaled by button clicks
             return await completionSource.Task;
         }
+
 
         public Task<string> GetTaskDescriptionAsync()
         {

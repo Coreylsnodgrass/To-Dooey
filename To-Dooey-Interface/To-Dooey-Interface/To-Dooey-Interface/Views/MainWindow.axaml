@@ -10,8 +10,13 @@
         x:Class="To_Dooey_Interface.Views.MainWindow"
         Title="To Do"
         Icon="/Assets/avalonia-logo.ico">
-
+	
 	<Grid>
+		<Grid Grid.ColumnSpan="2" Grid.RowSpan="3">
+			<Image Grid.ColumnSpan="2" Grid.RowSpan="3"
+               Source="F:\School\ServerSideWebDev\Final Proj\Final Project\To-Dooey\To-Dooey-Interface\To-Dooey-Interface\To-Dooey-Interface\Assets\background.webp"
+               Stretch="Fill"/>
+		</Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="*" />
@@ -24,16 +29,21 @@
 		</Grid.RowDefinitions>
 
 		<!-- Side Panel -->
-		<Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Background="#F0F0F0" Margin="12" MinWidth="200">
-			<StackPanel Orientation="Vertical">
-				<!-- Side Panel Title -->
-				<TextBlock Text="Lists" FontSize="24" FontWeight="Bold" Margin="12,12,12,0" HorizontalAlignment="Center"/>
 
-				<!-- List of Lists -->
-
-				<!-- New List Button -->
+		<Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Background="LightBlue" Margin="12" MinWidth="200" Opacity="0.3" CornerRadius="10">
+			<StackPanel Orientation="Vertical" MaxWidth="200" MinWidth="190" Margin="0,0,0,0" >
 				
-				<Button DockPanel.Dock="Top" 
+				
+				<!-- Side Panel Title -->
+
+
+				
+				<Border Opacity="100">
+					<TextBlock Text="Lists" FontSize="24" FontWeight="Bold" Margin="12,12,12,0" HorizontalAlignment="Center"/>
+				</Border>
+				<!-- New List Button -->
+				<Border Opacity="100">
+					<Button DockPanel.Dock="Top"
 						HorizontalAlignment="Stretch"
 						Background="LightBlue"
 						CornerRadius="20"
@@ -41,12 +51,13 @@
 						FontSize="16"
 						FontWeight="Bold"
 						Command="{Binding AddListCommand}"
-						HorizontalContentAlignment="Center">New List
-						<Button.Styles>
-						
-						</Button.Styles>
-				</Button>
-				<Button DockPanel.Dock="Top"
+						HorizontalContentAlignment="Center">
+						New List
+					</Button>
+				</Border>
+				<!-- Update List Button -->
+				<Border Opacity="100">
+					<Button DockPanel.Dock="Top"
 						HorizontalAlignment="Stretch"
 						Background="LightBlue"
 						CornerRadius="20"
@@ -55,9 +66,12 @@
 						FontWeight="Bold"
 						Command="{Binding UpdateListCommand}"
 						HorizontalContentAlignment="Center">
-					UpdateList
-				</Button>
-				<Button DockPanel.Dock="Top"
+						UpdateList
+					</Button>
+				</Border>
+				<!-- Delete List Button -->
+				<Border Opacity="100">
+					<Button DockPanel.Dock="Top"
 						HorizontalAlignment="Stretch"
 						Background="LightBlue"
 						CornerRadius="20"
@@ -65,30 +79,31 @@
 						FontSize="16"
 						FontWeight="Bold"
 						Command="{Binding DeleteListCommand}"
-						HorizontalContentAlignment="Center">DeleteList
-				</Button>
-				
+						HorizontalContentAlignment="Center">
+						DeleteList
+					</Button>
+				</Border>
+				<!-- List of Lists -->
+				<TextBlock Text="Lists" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Opacity="100"/>
 
-					<ListBox ItemsSource="{Binding Lists}" SelectedItem="{Binding SelectedList}" BorderThickness="0">
-					<ListBox.ItemTemplate>
-						<DataTemplate>
-							<TextBlock Text="{Binding Name}" FontSize="18" FontWeight="Bold" Margin="12,0,12,0" />
-						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
+				<ListBox ItemsSource="{Binding Lists}" SelectedItem="{Binding SelectedList}" BorderThickness="0" Background="Transparent">
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<Border CornerRadius="10" Background="LightBlue" Opacity="100">
+									<TextBlock Text="{Binding Name}" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center"/>
+								</Border>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
 				
-				
-
-
 			</StackPanel>
-			
+		</Border>
 			
 
-		</Border>
 
 		<!-- Header with Title and Buttons -->
-		<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Vertical" VerticalAlignment="Top" Margin="12">
-			<TextBlock Text="To Dooey" FontSize="30" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" />
+		<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Top" Margin="12">
+			<TextBlock Text="To Dooey" FontSize="30" FontWeight="Bold" VerticalAlignment="Top" HorizontalAlignment="Center"  />
 
 			<!-- Add Task Button -->
 			<Button DockPanel.Dock="Top"
@@ -128,18 +143,25 @@
 
 
 		<!-- List of Tasks for Selected List -->
-		<ScrollViewer Grid.Column="1" Grid.Row="1" Margin="12">
+		<ScrollViewer Grid.Column="1" Grid.Row="1" Margin="12" Opacity="0.2">
 			<ListBox ItemsSource="{Binding SelectedList.Tasks}" SelectedItem="{Binding SelectedTask}" BorderThickness="0">
 				<ListBox.ItemTemplate>
 					<DataTemplate>
+						<Border CornerRadius="10" Background="LightBlue" Opacity="100">
 						<StackPanel Orientation="Horizontal">
+							
 							<CheckBox IsChecked="{Binding IsSelected}" Margin="12,0,0,0" />
+							
+							
 							<TextBlock Text="{Binding Description}" FontSize="16" />
+							
 						</StackPanel>
+						</Border>
 					</DataTemplate>
 				</ListBox.ItemTemplate>
 			</ListBox>
 		</ScrollViewer>
+		
 	</Grid>
 
 </Window>
