@@ -5,6 +5,8 @@ using To_Dooey_Interface.Views;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Layout;
+using System;
+using System.Linq;
 
 namespace To_Dooey_Interface.Services
 {
@@ -94,16 +96,65 @@ namespace To_Dooey_Interface.Services
 
         public async Task<(string Description, CompletionStatus Status, string Responsibility)> ShowAddTaskDialogAsync()
         {
-            // Here you can interact with the user interface to collect task information,
-            // or directly pass default values or empty strings if UI interaction is not necessary.
+            // Define the dialog window
+            var dialog = new Window
+            {
+                Width = 400,
+                Height = 200,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                Title = "New Task",
+                CanResize = false
+            };
 
-            // For example:
-            string description = "New Task Description";
-            CompletionStatus status = CompletionStatus.NotStarted;
-            string responsibility = "Person Responsible";
+            // Create input fields and dropdown
+            var descriptionTextBox = new TextBox { Watermark = "Enter task description...", Margin = new Thickness(10) };
+            var statusComboBox = new ComboBox
+            {
+                Margin = new Thickness(10),
+                ItemsSource = Enum.GetValues(typeof(CompletionStatus)).Cast<CompletionStatus>().ToList()
+            };
 
-            // Return the task details
-            return (description, status, responsibility);
+            var responsibilityTextBox = new TextBox { Watermark = "Enter responsibility name...", Margin = new Thickness(10) };
+
+            // Create Buttons for OK and Cancel
+            var okButton = new Button { Content = "OK", Width = 130, Margin = new Thickness(10) };
+            var cancelButton = new Button { Content = "Cancel", Width = 130, Margin = new Thickness(10) };
+
+            // Setup the OK button click event
+            var completionSource = new TaskCompletionSource<(string, CompletionStatus, string)>();
+            okButton.Click += (_, _) =>
+            {
+                completionSource.SetResult((descriptionTextBox.Text, (CompletionStatus)statusComboBox.SelectedItem, responsibilityTextBox.Text));
+                dialog.Close();
+            };
+
+            // Setup the Cancel button click event
+            cancelButton.Click += (_, _) =>
+            {
+                completionSource.SetResult((null, default, null));
+                dialog.Close();
+            };
+
+            // Layout the dialog content
+            var stackPanel = new StackPanel { Orientation = Orientation.Vertical };
+            stackPanel.Children.Add(descriptionTextBox);
+            stackPanel.Children.Add(statusComboBox);
+            stackPanel.Children.Add(responsibilityTextBox);
+
+            var buttonPanel = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Center };
+            buttonPanel.Children.Add(okButton);
+            buttonPanel.Children.Add(cancelButton);
+            stackPanel.Children.Add(buttonPanel);
+
+            dialog.Content = stackPanel;
+
+            // Show the dialog
+            if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                await dialog.ShowDialog(desktop.MainWindow);
+            }
+
+            return await completionSource.Task;
         }
 
         public Task<string> GetTaskDescriptionAsync()

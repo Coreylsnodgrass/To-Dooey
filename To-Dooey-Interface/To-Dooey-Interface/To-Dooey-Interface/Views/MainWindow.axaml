@@ -10,7 +10,7 @@
         x:Class="To_Dooey_Interface.Views.MainWindow"
         Title="To Do"
         Icon="/Assets/avalonia-logo.ico">
-	
+
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" />
@@ -30,6 +30,37 @@
 				<TextBlock Text="Lists" FontSize="24" FontWeight="Bold" Margin="12,12,12,0" HorizontalAlignment="Center"/>
 
 				<!-- List of Lists -->
+
+				<!-- New List Button -->
+				
+				<Button DockPanel.Dock="Top" 
+						HorizontalAlignment="Stretch"
+						Background="LightBlue"
+						CornerRadius="20"
+						
+						FontSize="16"
+						FontWeight="Bold"
+						Command="{Binding AddListCommand}"
+						HorizontalContentAlignment="Center">New List
+						<Button.Styles>
+						
+						</Button.Styles>
+				</Button>
+				<Button DockPanel.Dock="Bottom"
+						HorizontalAlignment="Stretch"
+						Background="LightBlue"
+						CornerRadius="20"
+						Margin="0,0,0,0"
+						FontSize="16"
+						FontWeight="Bold"
+						Command="{Binding AddListCommand}"
+						HorizontalContentAlignment="Center">
+					DeleteList
+					<Button.Styles>
+
+					</Button.Styles>
+				</Button>
+				
 				<ListBox ItemsSource="{Binding Lists}" SelectedItem="{Binding SelectedList}" BorderThickness="0">
 					<ListBox.ItemTemplate>
 						<DataTemplate>
@@ -37,19 +68,34 @@
 						</DataTemplate>
 					</ListBox.ItemTemplate>
 				</ListBox>
-				<!-- New List Button -->
-				<Button Content="New List" Command="{Binding AddListCommand}" Margin="12,12,12,0" HorizontalAlignment="Center" />
+				
+				
+
 
 			</StackPanel>
 			
+			
+
 		</Border>
 
-		<!-- Header with Title and Add Task Button -->
+		<!-- Header with Title and Buttons -->
 		<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Vertical" VerticalAlignment="Top" Margin="12">
-			<TextBlock Text="To Dooey" FontSize="28" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" />
+			<TextBlock Text="To Dooey" FontSize="30" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" />
+
 			<!-- Add Task Button -->
-			<Button Content="Add Task" Command="{Binding AddTaskCommand}" Margin="0,0,12,0" HorizontalAlignment="Left" />
+			<Button DockPanel.Dock="Top"
+						HorizontalAlignment="Stretch"
+						Margin="0,5,0,0"
+						Background="LightBlue"
+						PointerPressed=""
+						CornerRadius="20"
+						FontSize="16"
+						FontWeight="Bold"
+						Command="{Binding AddTaskCommand}"
+						HorizontalContentAlignment="Center">Add Task</Button>
+			<!--<Button Content="Add Task" Command="{Binding AddTaskCommand}" Margin="0,4,12,0" HorizontalAlignment="Left" />-->
 		</StackPanel>
+
 
 		<!-- List of Tasks for Selected List -->
 		<ScrollViewer Grid.Column="1" Grid.Row="1" Margin="12">
@@ -65,4 +111,5 @@
 			</ListBox>
 		</ScrollViewer>
 	</Grid>
+
 </Window>

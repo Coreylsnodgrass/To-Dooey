@@ -42,5 +42,9 @@ namespace To_Dooey_Interface.Views
         {
             AvaloniaXamlLoader.Load(this);
         }
+
+        private void Button_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
+        {
+        }
     }
 }
