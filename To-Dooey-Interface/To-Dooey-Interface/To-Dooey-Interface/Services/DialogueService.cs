@@ -180,10 +180,11 @@ namespace To_Dooey_Interface.Services
             var descriptionTextBox = new TextBox { Text = currentTask.Description, Margin = new Thickness(10) };
             var statusComboBox = new ComboBox
             {
-                SelectedItem = currentTask.Status,
-                ItemsSource = Enum.GetValues(typeof(CompletionStatus)),
-                Margin = new Thickness(10)
+                Margin = new Thickness(10),
+                ItemsSource = Enum.GetValues(typeof(CompletionStatus)).Cast<CompletionStatus>().ToList(),
+                SelectedIndex = 0  // Set the first item as the default selected item
             };
+
 
             var responsibilityTextBox = new TextBox { Text = currentTask.Responsibility, Margin = new Thickness(10) };
 

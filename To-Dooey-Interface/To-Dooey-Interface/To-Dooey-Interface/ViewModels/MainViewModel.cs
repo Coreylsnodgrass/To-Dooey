@@ -110,17 +110,20 @@ namespace To_Dooey_Interface.ViewModels
             var taskDetails = await _dialogService.ShowUpdateTaskDialogAsync(selectedTask);
             if (taskDetails.Description != null || taskDetails.Status != default || taskDetails.Responsibility != null)
             {
-                await _apiService.UpdateTask(SelectedList.Id, selectedTask.Id, taskDetails.Description, taskDetails.Status, taskDetails.Responsibility);
+                await _apiService.UpdateTask(selectedTask.Id, taskDetails.Description, taskDetails.Status, taskDetails.Responsibility);
                 await LoadTasksForSelectedListAsync();
             }
         }
         private async Task DeleteTaskAsync()
         {
-            var selectedTask = SelectedList?.Tasks.FirstOrDefault(t => t.IsSelected);
-            if (selectedTask == null) return;
+            var tasksToDelete = SelectedList?.Tasks.Where(t => t.IsSelected).ToList();
+            if (tasksToDelete == null || !tasksToDelete.Any()) return;
 
-            await _apiService.DeleteTask(SelectedList.Id, selectedTask.Id);
-            await LoadTasksForSelectedListAsync();
+            foreach (var task in tasksToDelete)
+            {
+                await _apiService.DeleteTask( task.Id);
+            }
+            await LoadTasksForSelectedListAsync(); // Reload the task list post deletion
         }
 
         //public ToDoListViewModel _SelectedList

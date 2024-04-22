@@ -79,18 +79,58 @@ namespace Final_Project_ServerSide.Controllers
             }
             return Ok(task);
         }
+        // PUT: api/Tasks/{id} - Update a task
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateTask(int id, [FromBody] TaskItemDTO taskDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-        // DELETE: api/Tasks/{id}
+            var task = await _context.TaskItems.FindAsync(id);
+            if (task == null)
+            {
+                return NotFound($"Task with ID {id} not found.");
+            }
+
+            task.Description = taskDTO.Description;
+            task.Status = taskDTO.Status;
+            task.Responsibility = taskDTO.Responsibility;
+
+            _context.Entry(task).State = EntityState.Modified;
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.TaskItems.Any(e => e.Id == id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        // DELETE: api/Tasks/{id} - Delete a task
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTask(int id)
         {
             var task = await _context.TaskItems.FindAsync(id);
             if (task == null)
             {
-                return NotFound();
+                return NotFound($"Task with ID {id} not found.");
             }
+
             _context.TaskItems.Remove(task);
             await _context.SaveChangesAsync();
+
             return NoContent();
         }
     }

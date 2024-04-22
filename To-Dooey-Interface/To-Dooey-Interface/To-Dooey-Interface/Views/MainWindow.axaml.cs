@@ -15,28 +15,8 @@ namespace To_Dooey_Interface.Views
             var dialogService = new DialogService(); // You need to define this class or get an instance from a service provider
             DataContext = new MainViewModel(apiService, dialogService);
 
-            // Attach an event handler to the Loaded event of the window
-            this.AttachedToVisualTree += MainWindow_AttachedToVisualTree;
         }
 
-        private async void MainWindow_AttachedToVisualTree(object sender, VisualTreeAttachmentEventArgs e)
-        {
-            // Get a reference to the ListBox control
-            var listBox = this.FindControl<ListBox>("listsListBox");
-
-            if (listBox != null)
-            {
-                // Attach an event handler to the SelectionChanged event of the ListBox
-                listBox.SelectionChanged += async (sender, args) =>
-                {
-                    if (listBox.SelectedItem != null)
-                    {
-                        // Call the OnListSelectedAsync method of the MainViewModel
-                        await ((MainViewModel)DataContext).LoadTasksForSelectedListAsync(); ;
-                    }
-                };
-            }
-        }
 
         private void InitializeComponent()
         {

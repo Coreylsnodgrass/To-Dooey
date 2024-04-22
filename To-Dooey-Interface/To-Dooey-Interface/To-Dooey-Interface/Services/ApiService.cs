@@ -73,15 +73,17 @@ namespace To_Dooey_Interface.Services
             }
         }
 
-        public async Task DeleteTask(int listId, int taskId)
+        public async Task DeleteTask(int id)
         {
-            var response = await client.DeleteAsync($"Lists/{listId}/tasks/{taskId}");
+            // The URL should directly target the task by its ID
+            var response = await client.DeleteAsync($"Tasks/{id}");
 
             if (!response.IsSuccessStatusCode)
             {
                 throw new Exception($"Failed to delete the task. Status Code: {response.StatusCode}");
             }
         }
+
         public async Task<List<ToDoListViewModel>> GetListsAsync()
         {
             var response = await client.GetAsync("Lists");
@@ -96,17 +98,19 @@ namespace To_Dooey_Interface.Services
                 throw new Exception($"Failed to fetch lists. Status Code: {response.StatusCode}");
             }
         }
-        public async Task UpdateTask(int listId, int taskId, string description, CompletionStatus status, string responsibility)
+        public async Task UpdateTask(int id, string description, CompletionStatus status, string responsibility)
         {
             var updateModel = new { Description = description, Status = status, Responsibility = responsibility };
             var content = new StringContent(JsonSerializer.Serialize(updateModel), Encoding.UTF8, "application/json");
-            var response = await client.PutAsync($"Lists/{listId}/tasks/{taskId}", content);
+            // Ensure the URL is correct
+            var response = await client.PutAsync($"Tasks/{id}", content);
 
             if (!response.IsSuccessStatusCode)
             {
                 throw new Exception($"Failed to update the task. Status Code: {response.StatusCode}");
             }
         }
+
         public async Task UpdateList(int id, string name)
         {
             var updateModel = new { Name = name };

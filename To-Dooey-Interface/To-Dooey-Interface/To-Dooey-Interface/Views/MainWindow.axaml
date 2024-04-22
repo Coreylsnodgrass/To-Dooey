@@ -133,7 +133,7 @@
 				<ListBox.ItemTemplate>
 					<DataTemplate>
 						<StackPanel Orientation="Horizontal">
-							<CheckBox IsChecked="{Binding IsCompleted}" Margin="12,0,0,0" />
+							<CheckBox IsChecked="{Binding IsSelected}" Margin="12,0,0,0" />
 							<TextBlock Text="{Binding Description}" FontSize="16" />
 						</StackPanel>
 					</DataTemplate>
