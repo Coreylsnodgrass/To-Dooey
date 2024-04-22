@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -13,6 +14,10 @@ namespace To_Dooey_Interface.ViewModels
         // Commands
         public ICommand AddListCommand { get; }
         public ICommand AddTaskCommand { get; }
+        public ICommand UpdateListCommand { get; }
+        public ICommand UpdateTaskCommand { get; }
+        public ICommand DeleteListCommand { get; }
+        public ICommand DeleteTaskCommand { get; }
 
         private readonly ApiService _apiService;
         private readonly IDialogService _dialogService;
@@ -37,6 +42,10 @@ namespace To_Dooey_Interface.ViewModels
 
             AddListCommand = new AsyncRelayCommand(AddListAsync);
             AddTaskCommand = new AsyncRelayCommand(AddTaskAsync);
+            UpdateListCommand = new AsyncRelayCommand(UpdateListAsync);
+            UpdateTaskCommand = new AsyncRelayCommand(UpdateTaskAsync);
+            DeleteListCommand = new AsyncRelayCommand(DeleteListAsync);
+            DeleteTaskCommand = new AsyncRelayCommand(DeleteTaskAsync);
 
             LoadData();
         }
@@ -45,7 +54,7 @@ namespace To_Dooey_Interface.ViewModels
         {
             try
             {
-                var apiLists = await _apiService.GetListsAsync();
+                var apiLists = await _apiService.GetListsAsync(); 
                 Lists.Clear();
                 foreach (var apiList in apiLists)
                 {
@@ -67,21 +76,51 @@ namespace To_Dooey_Interface.ViewModels
                 await LoadData();
             }
         }
+        private async Task UpdateListAsync()
+        {
+            if (SelectedList == null) return;
+            var newListName = await _dialogService.ShowUpdateListDialogAsync(SelectedList.Name);
+            if (!string.IsNullOrWhiteSpace(newListName))
+            {
+                await _apiService.UpdateList(SelectedList.Id, newListName);
+                await LoadData();
+            }
+        }
+        private async Task DeleteListAsync()
+        {
+            if (SelectedList == null) return;
+            await _apiService.DeleteList(SelectedList.Id);
+            await LoadData();
+        }
 
         private async Task AddTaskAsync()
         {
-            if (SelectedList == null)
-            {
-                // Optionally handle displaying a message to the user
-                return;
-            }
-
+            if (SelectedList == null) return;
             var taskDetails = await _dialogService.ShowAddTaskDialogAsync();
             if (taskDetails.Description != null)
             {
                 await _apiService.AddTaskToList(SelectedList.Id, taskDetails.Description, taskDetails.Status, taskDetails.Responsibility);
                 await LoadTasksForSelectedListAsync();
             }
+        }
+        private async Task UpdateTaskAsync()
+        {
+            var selectedTask = SelectedList?.Tasks.FirstOrDefault(t => t.IsSelected);
+            if (selectedTask == null) return;
+            var taskDetails = await _dialogService.ShowUpdateTaskDialogAsync(selectedTask);
+            if (taskDetails.Description != null || taskDetails.Status != default || taskDetails.Responsibility != null)
+            {
+                await _apiService.UpdateTask(SelectedList.Id, selectedTask.Id, taskDetails.Description, taskDetails.Status, taskDetails.Responsibility);
+                await LoadTasksForSelectedListAsync();
+            }
+        }
+        private async Task DeleteTaskAsync()
+        {
+            var selectedTask = SelectedList?.Tasks.FirstOrDefault(t => t.IsSelected);
+            if (selectedTask == null) return;
+
+            await _apiService.DeleteTask(SelectedList.Id, selectedTask.Id);
+            await LoadTasksForSelectedListAsync();
         }
 
         //public ToDoListViewModel _SelectedList

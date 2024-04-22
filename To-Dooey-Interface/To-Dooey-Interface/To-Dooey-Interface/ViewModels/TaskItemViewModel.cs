@@ -11,9 +11,16 @@ namespace To_Dooey_Interface.ViewModels
         private CompletionStatus _status;
         private string _responsibility;
         private bool _iscompleted;
+        private bool _isSelected;
 
         public int Id { get; set; }
 
+
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set => SetProperty(ref _isSelected, value);
+        }
         [JsonPropertyName("description")]
         public string Description
         {

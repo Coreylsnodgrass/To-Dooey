@@ -46,22 +46,30 @@
 						
 						</Button.Styles>
 				</Button>
-				<Button DockPanel.Dock="Bottom"
+				<Button DockPanel.Dock="Top"
 						HorizontalAlignment="Stretch"
 						Background="LightBlue"
 						CornerRadius="20"
 						Margin="0,0,0,0"
 						FontSize="16"
 						FontWeight="Bold"
-						Command="{Binding AddListCommand}"
+						Command="{Binding UpdateListCommand}"
 						HorizontalContentAlignment="Center">
-					DeleteList
-					<Button.Styles>
-
-					</Button.Styles>
+					UpdateList
+				</Button>
+				<Button DockPanel.Dock="Top"
+						HorizontalAlignment="Stretch"
+						Background="LightBlue"
+						CornerRadius="20"
+						Margin="0,0,0,0"
+						FontSize="16"
+						FontWeight="Bold"
+						Command="{Binding DeleteListCommand}"
+						HorizontalContentAlignment="Center">DeleteList
 				</Button>
 				
-				<ListBox ItemsSource="{Binding Lists}" SelectedItem="{Binding SelectedList}" BorderThickness="0">
+
+					<ListBox ItemsSource="{Binding Lists}" SelectedItem="{Binding SelectedList}" BorderThickness="0">
 					<ListBox.ItemTemplate>
 						<DataTemplate>
 							<TextBlock Text="{Binding Name}" FontSize="18" FontWeight="Bold" Margin="12,0,12,0" />
@@ -84,7 +92,7 @@
 
 			<!-- Add Task Button -->
 			<Button DockPanel.Dock="Top"
-						HorizontalAlignment="Stretch"
+						HorizontalAlignment="Left"
 						Margin="0,5,0,0"
 						Background="LightBlue"
 						PointerPressed=""
@@ -93,6 +101,28 @@
 						FontWeight="Bold"
 						Command="{Binding AddTaskCommand}"
 						HorizontalContentAlignment="Center">Add Task</Button>
+			<Button DockPanel.Dock="Top"
+						HorizontalAlignment="Left"
+						Background="LightBlue"
+						CornerRadius="20"
+						Margin="0,0,0,0"
+						FontSize="16"
+						FontWeight="Bold"
+						Command="{Binding UpdateTaskCommand}"
+						HorizontalContentAlignment="Left">UpdateTask
+			</Button>
+			<Button DockPanel.Dock="Top"
+						HorizontalAlignment="Left"
+						Background="LightBlue"
+						CornerRadius="20"
+						Margin="0,0,0,0"
+						FontSize="16"
+						FontWeight="Bold"
+						Command="{Binding DeleteTaskCommand}"
+						HorizontalContentAlignment="Left">DeleteTask
+
+			</Button>
+			
 			<!--<Button Content="Add Task" Command="{Binding AddTaskCommand}" Margin="0,4,12,0" HorizontalAlignment="Left" />-->
 		</StackPanel>
 

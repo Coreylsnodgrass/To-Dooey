@@ -107,6 +107,18 @@ namespace To_Dooey_Interface.Services
                 throw new Exception($"Failed to update the task. Status Code: {response.StatusCode}");
             }
         }
+        public async Task UpdateList(int id, string name)
+        {
+            var updateModel = new { Name = name };
+            var content = new StringContent(JsonSerializer.Serialize(updateModel), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync($"Lists/{id}", content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"Failed to update the list. Status Code: {response.StatusCode}");
+            }
+        }
+
         public async Task<List<TaskItemViewModel>> GetTasksForListAsync(int listId)
         {
             var response = await client.GetAsync($"Tasks/ByList/{listId}");

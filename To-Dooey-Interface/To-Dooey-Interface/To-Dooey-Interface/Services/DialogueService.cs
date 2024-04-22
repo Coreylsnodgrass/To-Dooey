@@ -92,6 +92,136 @@ namespace To_Dooey_Interface.Services
             // Await the task completion source which gets signaled by button clicks
             return await completionSource.Task;
         }
+        
+        public async Task<string> ShowUpdateListDialogAsync(string currentName)
+        {
+            var dialog = new Window
+            {
+                Width = 300,
+                Height = 150,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                Title = "Update List",
+                CanResize = false
+            };
+
+            var textBox = new TextBox
+            {
+                Width = 280,
+                Text = currentName,
+                Margin = new Thickness(10)
+            };
+
+            var okButton = new Button
+            {
+                Content = "OK",
+                Width = 130,
+                Margin = new Thickness(10)
+            };
+
+            var cancelButton = new Button
+            {
+                Content = "Cancel",
+                Width = 130,
+                Margin = new Thickness(10)
+            };
+
+            var completionSource = new TaskCompletionSource<string>();
+            okButton.Click += (_, _) =>
+            {
+                completionSource.SetResult(textBox.Text);
+                dialog.Close();
+            };
+
+            cancelButton.Click += (_, _) =>
+            {
+                completionSource.SetResult(null);
+                dialog.Close();
+            };
+
+            var stackPanel = new StackPanel
+            {
+                Orientation = Orientation.Vertical,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            stackPanel.Children.Add(textBox);
+            var buttonPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            buttonPanel.Children.Add(okButton);
+            buttonPanel.Children.Add(cancelButton);
+            stackPanel.Children.Add(buttonPanel);
+
+            dialog.Content = stackPanel;
+
+            if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                dialog.ShowDialog(desktop.MainWindow);
+            }
+
+            return await completionSource.Task;
+        }
+        
+        public async Task<(string Description, CompletionStatus Status, string Responsibility)> ShowUpdateTaskDialogAsync(TaskItemViewModel currentTask)
+        {
+            var dialog = new Window
+            {
+                Width = 400,
+                Height = 250,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                Title = "Update Task",
+                CanResize = false
+            };
+
+            var descriptionTextBox = new TextBox { Text = currentTask.Description, Margin = new Thickness(10) };
+            var statusComboBox = new ComboBox
+            {
+                SelectedItem = currentTask.Status,
+                ItemsSource = Enum.GetValues(typeof(CompletionStatus)),
+                Margin = new Thickness(10)
+            };
+
+            var responsibilityTextBox = new TextBox { Text = currentTask.Responsibility, Margin = new Thickness(10) };
+
+            var okButton = new Button { Content = "OK", Width = 130, Margin = new Thickness(10) };
+            var cancelButton = new Button { Content = "Cancel", Width = 130, Margin = new Thickness(10) };
+
+            var completionSource = new TaskCompletionSource<(string, CompletionStatus, string)>();
+            okButton.Click += (_, _) =>
+            {
+                completionSource.SetResult((descriptionTextBox.Text, (CompletionStatus)statusComboBox.SelectedItem, responsibilityTextBox.Text));
+                dialog.Close();
+            };
+
+            cancelButton.Click += (_, _) =>
+            {
+                completionSource.SetResult((null, currentTask.Status, null));
+                dialog.Close();
+            };
+
+            var stackPanel = new StackPanel { Orientation = Orientation.Vertical };
+            stackPanel.Children.Add(descriptionTextBox);
+            stackPanel.Children.Add(statusComboBox);
+            stackPanel.Children.Add(responsibilityTextBox);
+
+            var buttonPanel = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Center };
+            buttonPanel.Children.Add(okButton);
+            buttonPanel.Children.Add(cancelButton);
+            stackPanel.Children.Add(buttonPanel);
+
+            dialog.Content = stackPanel;
+
+            if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                dialog.ShowDialog(desktop.MainWindow);
+            }
+
+            return await completionSource.Task;
+        }
 
 
         public async Task<(string Description, CompletionStatus Status, string Responsibility)> ShowAddTaskDialogAsync()
