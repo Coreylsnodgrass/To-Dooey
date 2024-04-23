@@ -1,4 +1,8 @@
-<Window xmlns="https://github.com/avaloniaui"
+<Window Width="1280"
+		Height="720"
+		MinWidth="1280"
+		MinHeight="720"
+		xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -10,17 +14,35 @@
         x:Class="To_Dooey_Interface.Views.MainWindow"
         Title="To Do"
         Icon="/Assets/avalonia-logo.ico">
+	
+	
 	<Window.Styles>
 		<!-- Button Style -->
 		<Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
 			<Setter Property="Background" Value="Gray"/>
 		</Style>
 	</Window.Styles>
+	<Window.Styles>
+    <Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="Transparent"/>
+		<Setter Property="CornerRadius" Value="10"/>
+		<Setter	Property="Height" Value="60"/>
+    </Style>
+</Window.Styles>
 	<Grid>
 		<Grid Grid.ColumnSpan="2" Grid.RowSpan="3">
 			<Image Grid.ColumnSpan="2" Grid.RowSpan="3"
-               Source="F:\School\ServerSideWebDev\Final Proj\Final Project\To-Dooey\To-Dooey-Interface\To-Dooey-Interface\To-Dooey-Interface\Assets\background.webp"
+               Source="../Assets/City.png"
                Stretch="UniformToFill"/>
+
+			<!-- Extra Images
+				"Assets/Room.png",
+				"Assets/City.png",
+				"Assets/Fields.png",
+				"Assets/Library.png",
+				"Assets/Mountains.png"-->
+
+
 		</Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" />
@@ -35,18 +57,17 @@
 
 		<!-- Side Panel -->
 
-		<Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Background="LightBlue" Margin="12" MinWidth="200" Opacity="0.3" CornerRadius="10" BorderThickness="3" BorderBrush="Black"  >
-			<StackPanel Orientation="Vertical" MaxWidth="200" MinWidth="190" Margin="0,0,0,0" >
+		<Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Background="Black" Margin="12" MinWidth="200" Opacity="0.7" CornerRadius="10" BorderThickness="3" BorderBrush="Black"  >
+			<StackPanel Orientation="Vertical" MaxWidth="200" MinWidth="190" Margin="0,12,0,0" >
 				
 				
 
 				<!-- New List Button -->
-				<Border Opacity="100">
+				<Border Opacity="10">
 					<Button DockPanel.Dock="Top"
 						HorizontalAlignment="Stretch"
-						Background="LightBlue"
+						Background="Goldenrod"
 						CornerRadius="20"
-						
 						FontSize="12"
 						FontWeight="Bold"
 						Command="{Binding AddListCommand}"
@@ -55,10 +76,10 @@
 					</Button>
 				</Border>
 				<!-- Update List Button -->
-				<Border Opacity="100">
+				<Border Opacity="10">
 					<Button DockPanel.Dock="Top"
 						HorizontalAlignment="Stretch"
-						Background="LightBlue"
+						Background="Goldenrod"
 						CornerRadius="20"
 						Margin="0,0,0,0"
 						FontSize="12"
@@ -69,10 +90,10 @@
 					</Button>
 				</Border>
 				<!-- Delete List Button -->
-				<Border Opacity="100">
+				<Border Opacity="10">
 					<Button DockPanel.Dock="Top"
 						HorizontalAlignment="Stretch"
-						Background="LightBlue"
+						Background="Goldenrod"
 						CornerRadius="20"
 						Margin="0,0,0,0"
 						FontSize="12"
@@ -83,13 +104,13 @@
 					</Button>
 				</Border>
 				<!-- List of Lists -->
-				<TextBlock Text="-----Lists-----" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Opacity="100" VerticalAlignment="Center" FontFamily="Calibri"/>
+				<TextBlock Text="-----Lists-----" FontSize="20" FontWeight="Bold" FontStyle="" HorizontalAlignment="Center" Opacity="10" VerticalAlignment="Center" FontFamily="Calibri" Foreground="White"/>
 
 				<ListBox ItemsSource="{Binding Lists}" SelectedItem="{Binding SelectedList}" BorderThickness="" Background="Transparent">
 					<ListBox.ItemTemplate>
 						<DataTemplate>
-							<Border CornerRadius="10" Background="LightBlue" Opacity="100">
-								<TextBlock Text="{Binding Name}" FontSize="16" FontWeight="Bold" FontFamily="Calibri" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" />
+							<Border CornerRadius="5" Background="Goldenrod" HorizontalAlignment="Stretch" Opacity="10">
+								<TextBlock Text="{Binding Name}" FontSize="16" FontWeight="Bold" FontFamily="Calibri" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
 							</Border>
 						</DataTemplate>
 					</ListBox.ItemTemplate>
@@ -103,16 +124,20 @@
 		<!-- Header with Title and Buttons -->
 		<!-- Header with Title and Buttons -->
 		<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Vertical" VerticalAlignment="Top" Margin="12">
+			
+			<Border CornerRadius="30" Background="black" Width="200" Opacity="0.7">
+				<TextBlock Text="To-Dooey" FontSize="40" FontWeight="ExtraBold" LetterSpacing="-3" Foreground="Goldenrod" Opacity="10" HorizontalAlignment="Center" Margin="0,0,0,0"/>
+			</Border>
 
 			<!-- Title -->
-			<TextBlock Text="To Dooey" FontSize="30" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,0" />
+			
 			
 			<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,20,0,0">
 			<!-- Add Task Button -->
 			<Button Content="Add Task"
 					Margin="0,0,5,0"
-					Background="LightBlue"
-					Opacity="0.8"
+					Background="Goldenrod"
+					Opacity="1"
 					CornerRadius="20"
 					FontSize="12"
 					FontWeight="Bold"
@@ -122,8 +147,8 @@
 			<!-- Update Task Button -->
 			<Button Content="UpdateTask"
 					Margin="0,0,5,0"
-					Background="LightBlue"
-					Opacity="0.8"
+					Background="Goldenrod"
+					Opacity="1"
 					CornerRadius="20"
 					FontSize="12"
 					FontWeight="Bold"
@@ -132,8 +157,8 @@
 
 			<!-- Delete Task Button -->
 			<Button Content="DeleteTask"
-					Background="LightBlue"
-					Opacity="0.8"
+					Background="Goldenrod"
+					Opacity="1"
 					CornerRadius="20"
 					FontSize="12"
 					FontWeight="Bold"
@@ -146,14 +171,15 @@
 
 
 		<!-- List of Tasks for Selected List -->
-		<ScrollViewer Grid.Column="1" Grid.Row="1" Margin="12" Background="Transparent" Opacity="0.3" >
-			<ListBox ItemsSource="{Binding SelectedList.Tasks}" SelectedItem="{Binding SelectedTask}" BorderThickness="3" CornerRadius="10">
+		<ScrollViewer Grid.Column="1" Grid.Row="1" Margin="12" Background="Black" Opacity="0.7" >
+			<ListBox ItemsSource="{Binding SelectedList.Tasks}" SelectedItem="{Binding SelectedTask}" BorderThickness="3" CornerRadius="10" Background="Transparent" >
 				<ListBox.ItemTemplate>
 					<DataTemplate>
-						<Border CornerRadius="10" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited" Opacity="100">
-							<StackPanel Orientation="Horizontal" >
+						<Border CornerRadius="10" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited" Opacity="1">
+							<StackPanel Orientation="Horizontal" Background="Goldenrod" Opacity="10">
 								<CheckBox IsChecked="{Binding IsSelected}" Margin="12,0,0,0" />
-								<TextBlock Text="{Binding Description}" FontSize="14" TextAlignment="Center" FontWeight="Bold" VerticalAlignment="Center"/>
+								<TextBlock Text="{Binding Description}" FontSize="14" TextAlignment="Center" FontWeight="Bold" VerticalAlignment="Center" />
+								<TextBlock Text="{Binding Status, StringFormat='Status: {0}'}" FontSize="14" TextAlignment="Center" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 							</StackPanel>
 						</Border>
 					</DataTemplate>

@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia.OpenGL;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using To_Dooey_Interface.Services;
@@ -21,12 +25,16 @@ namespace To_Dooey_Interface.ViewModels
 
         private readonly ApiService _apiService;
         private readonly IDialogService _dialogService;
-
+        private int _currentBackgroundIndex = 0;
+        public event PropertyChangedEventHandler PropertyChanged;
+        private string _currentBackground;
 
         [ObservableProperty]
         private ToDoListViewModel selectedList;
 
         private ObservableCollection<ToDoListViewModel> lists = new ObservableCollection<ToDoListViewModel>();
+        protected virtual void OnPropertyChanged(string propertyName) =>
+       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         // Lists property
         public ObservableCollection<ToDoListViewModel> Lists
@@ -34,7 +42,7 @@ namespace To_Dooey_Interface.ViewModels
             get => lists;
             set => SetProperty(ref lists, value);
         }
-
+       
         public MainViewModel(ApiService apiService, IDialogService dialogService)
         {
             _apiService = apiService ?? throw new ArgumentNullException(nameof(apiService));
@@ -47,9 +55,9 @@ namespace To_Dooey_Interface.ViewModels
             DeleteListCommand = new AsyncRelayCommand(DeleteListAsync);
             DeleteTaskCommand = new AsyncRelayCommand(DeleteTaskAsync);
 
+
             LoadData();
         }
-
         private async Task LoadData()
         {
             try
