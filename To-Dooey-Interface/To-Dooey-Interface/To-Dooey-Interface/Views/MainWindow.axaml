@@ -26,8 +26,9 @@
     <Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
         <Setter Property="Background" Value="Transparent"/>
 		<Setter Property="CornerRadius" Value="10"/>
-		<Setter	Property="Height" Value="60"/>
+		<Setter	Property="Height" Value="66"/>
     </Style>
+	
 </Window.Styles>
 	<Grid>
 		<Grid Grid.ColumnSpan="2" Grid.RowSpan="3">
@@ -106,11 +107,11 @@
 				<!-- List of Lists -->
 				<TextBlock Text="-----Lists-----" FontSize="20" FontWeight="Bold" FontStyle="" HorizontalAlignment="Center" Opacity="10" VerticalAlignment="Center" FontFamily="Calibri" Foreground="White"/>
 
-				<ListBox ItemsSource="{Binding Lists}" SelectedItem="{Binding SelectedList}" BorderThickness="" Background="Transparent">
+				<ListBox ItemsSource="{Binding Lists}" SelectedItem="{Binding SelectedList}" Background="Transparent">
 					<ListBox.ItemTemplate>
 						<DataTemplate>
 							<Border CornerRadius="5" Background="Goldenrod" HorizontalAlignment="Stretch" Opacity="10">
-								<TextBlock Text="{Binding Name}" FontSize="16" FontWeight="Bold" FontFamily="Calibri" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
+								<TextBlock Text="{Binding Name}" FontSize="16" FontWeight="Bold" FontFamily="Calibri" TextAlignment="Center"  HorizontalAlignment="Stretch" />
 							</Border>
 						</DataTemplate>
 					</ListBox.ItemTemplate>
@@ -172,18 +173,32 @@
 
 		<!-- List of Tasks for Selected List -->
 		<ScrollViewer Grid.Column="1" Grid.Row="1" Margin="12" Background="Black" Opacity="0.7" >
-			<ListBox ItemsSource="{Binding SelectedList.Tasks}" SelectedItem="{Binding SelectedTask}" BorderThickness="3" CornerRadius="10" Background="Transparent" >
+			<ListBox ItemsSource="{Binding SelectedList.Tasks}"  SelectedItem="{Binding SelectedTask}" BorderThickness="3" CornerRadius="10" Background="Transparent" >
 				<ListBox.ItemTemplate>
 					<DataTemplate>
-						<Border CornerRadius="10" PointerEntered="OnPointerEntered" PointerExited="OnPointerExited" Opacity="1">
-							<StackPanel Orientation="Horizontal" Background="Goldenrod" Opacity="10">
-								<CheckBox IsChecked="{Binding IsSelected}" Margin="12,0,0,0" />
-								<TextBlock Text="{Binding Description}" FontSize="14" TextAlignment="Center" FontWeight="Bold" VerticalAlignment="Center" />
-								<TextBlock Text="{Binding Status, StringFormat='Status: {0}'}" FontSize="14" TextAlignment="Center" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-							</StackPanel>
+						<Border CornerRadius="10" Background="Goldenrod" Padding="10" Opacity="10" Height="45">
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="2*"/>
+									<ColumnDefinition Width="*"/>
+									<ColumnDefinition Width="2*"/>
+								</Grid.ColumnDefinitions>
+
+								<CheckBox IsChecked="{Binding IsSelected}" Margin="4" VerticalAlignment="Center" Grid.Column="0"/>
+
+								<TextBlock Text="{Binding Description}" FontSize="14" FontWeight="Bold" 
+										   TextAlignment="Left" Grid.Column="0" VerticalAlignment="Center" Margin="35,0,0,0"/>
+
+								<TextBlock Text="{Binding Status, StringFormat='Status: {0}'}" FontSize="12" Margin="-100,0,0,0"
+										   FontWeight="Bold" TextAlignment="Center" VerticalAlignment="Center" Grid.Column="2"/>
+
+								<TextBlock Text="{Binding Responsibility, StringFormat='Owner: {0}'}" FontSize="12" FontWeight="Bold"
+										   TextAlignment="Right" Grid.Column="2" VerticalAlignment="Center" Margin="0,0,4,0"/>
+							</Grid>
 						</Border>
 					</DataTemplate>
 				</ListBox.ItemTemplate>
+
 			</ListBox>
 		</ScrollViewer>
 		
