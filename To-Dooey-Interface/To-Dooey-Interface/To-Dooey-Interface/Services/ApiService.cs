@@ -116,7 +116,7 @@ namespace To_Dooey_Interface.Services
             var updateModel = new { listName = name }; // Ensure the property name matches the API model
             var content = new StringContent(JsonSerializer.Serialize(updateModel), Encoding.UTF8, "application/json");
             var response = await client.PutAsync($"Lists/{id}", content);
-
+            //
             if (!response.IsSuccessStatusCode)
             {
                 // It's a good idea to read the response content for additional error details
