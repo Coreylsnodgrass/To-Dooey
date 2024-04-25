@@ -113,13 +113,15 @@ namespace To_Dooey_Interface.Services
 
         public async Task UpdateList(int id, string name)
         {
-            var updateModel = new { Name = name };
+            var updateModel = new { listName = name }; // Ensure the property name matches the API model
             var content = new StringContent(JsonSerializer.Serialize(updateModel), Encoding.UTF8, "application/json");
             var response = await client.PutAsync($"Lists/{id}", content);
 
             if (!response.IsSuccessStatusCode)
             {
-                throw new Exception($"Failed to update the list. Status Code: {response.StatusCode}");
+                // It's a good idea to read the response content for additional error details
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Failed to update the list. Status Code: {response.StatusCode}. Response Content: {errorContent}");
             }
         }
 
