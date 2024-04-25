@@ -33,7 +33,7 @@
 	<Grid>
 		<Grid Grid.ColumnSpan="2" Grid.RowSpan="3">
 			<Image Grid.ColumnSpan="2" Grid.RowSpan="3"
-               Source="../Assets/City.png"
+               Source="../Assets/Mountains.png"
                Stretch="UniformToFill"/>
 
 			<!-- Extra Images
